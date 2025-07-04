@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function Home() {
   const [selectedNumbers, setSelectedNumbers] = useState(new Set());
@@ -145,9 +146,18 @@ export default function Home() {
   return (
     <div className="h-screen bg-gray-100 p-4 overflow-hidden">
       <main className="max-w-7xl mx-auto h-full flex flex-col">
-        <h1 className="text-2xl font-bold text-center mb-4 text-gray-800 flex-shrink-0">
-          Bingo Batallón 1
-        </h1>
+        <div className="flex items-center justify-center mb-4 text-gray-800 flex-shrink-0">
+          <Image
+            src="/logo.png"
+            alt="Logo Batallón 1 Exploradores Salesianos"
+            width={60}
+            height={60}
+            className="rounded-full mr-3"
+          />
+          <h1 className="text-2xl font-bold">
+            Bingo Batallón 1
+          </h1>
+        </div>
         
         <div className="flex gap-6 flex-1 min-h-0">
           {/* Grilla de números - 2/3 de la pantalla */}
