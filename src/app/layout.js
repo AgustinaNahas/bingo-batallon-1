@@ -17,7 +17,7 @@ export const metadata = {
   keywords: "bingo, exploradores, salesianos, don bosco, batallón 1, pablo barton, juego, premios",
   authors: [{ name: "Batallón 1 Exploradores Salesianos" }],
   openGraph: {
-    title: "Bingo Batallón 1 - Exploradores Salesianos de Don Bosco",
+    title: "Bingo Batallón 1 - Exploradores Argentinos de Don Bosco",
     description: "Aplicación para jugar al bingo del Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco",
     type: "website",
     images: [

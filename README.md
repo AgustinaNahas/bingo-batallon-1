@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Bingo Batallón 1 - Exploradores Argentinos de Don Bosco
 
-## Getting Started
+Aplicación web para organizar y jugar partidas de bingo del Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco.
 
-First, run the development server:
+## Características
+
+- **Grilla interactiva**: Números del 1 al 100 con botones clickeables
+- **Seguimiento de números**: Lista de los últimos 5 números seleccionados
+- **Sistema de premios**: Configuración de premios para cada partida
+- **Persistencia**: Guardado automático en localStorage
+- **Modales de celebración**: Pantallas completas para LÍNEA y BINGO
+- **Diseño responsivo**: Adaptado a diferentes tamaños de pantalla
+
+## Tecnologías
+
+- **Next.js 15**: Framework de React
+- **Tailwind CSS**: Estilos y diseño
+- **localStorage**: Persistencia de datos
+- **GitHub Pages**: Despliegue automático
+
+## Uso
+
+1. **Seleccionar números**: Haz clic en los números de la grilla para marcarlos
+2. **Ver historial**: Los últimos 5 números aparecen en el panel lateral
+3. **Configurar premio**: Al reiniciar, ingresa el premio para la nueva partida
+4. **Celebrar victorias**: Usa los botones LÍNEA y BINGO para celebrar
+
+## Despliegue
+
+La aplicación se despliega automáticamente en GitHub Pages en cada push a la rama main.
+
+**URL**: https://agustinanahas.github.io/bingo-batallon-1/
+
+## Desarrollo local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Estructura del proyecto
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```
+src/
+├── app/
+│   ├── page.js          # Componente principal
+│   ├── layout.js        # Layout y metadatos
+│   └── globals.css      # Estilos globales
+public/
+├── logo.png             # Logo del Batallón 1
+└── favicon.ico          # Favicon del sitio
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Contribución
 
-## Learn More
+Este proyecto es específico para el Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Batallón 1 Pablo César Barton**  
+*Exploradores Argentinos de Don Bosco*
