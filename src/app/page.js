@@ -9,9 +9,13 @@ export default function Home() {
   const [lastNumbers, setLastNumbers] = useState([]);
   const [gameId, setGameId] = useState(null);
   const [selectionHistory, setSelectionHistory] = useState([]);
-  const [currentPrize, setCurrentPrize] = useState('');
+  const [linePrize, setLinePrize] = useState('');
+  const [bingoPrize, setBingoPrize] = useState('');
+  const [lineClaimed, setLineClaimed] = useState(false);
+  const [bingoClaimed, setBingoClaimed] = useState(false);
   const [showPrizeModal, setShowPrizeModal] = useState(false);
-  const [prizeInput, setPrizeInput] = useState('');
+  const [linePrizeInput, setLinePrizeInput] = useState('');
+  const [bingoPrizeInput, setBingoPrizeInput] = useState('');
   const [showLineModal, setShowLineModal] = useState(false);
   const [showBingoModal, setShowBingoModal] = useState(false);
 
@@ -26,7 +30,10 @@ export default function Home() {
         setLastNumbers(gameData.lastNumbers || []);
         setGameId(gameData.gameId);
         setSelectionHistory(gameData.selectionHistory || []);
-        setCurrentPrize(gameData.currentPrize || '');
+        setLinePrize(gameData.linePrize || '');
+        setBingoPrize(gameData.bingoPrize || '');
+        setLineClaimed(gameData.lineClaimed || false);
+        setBingoClaimed(gameData.bingoClaimed || false);
       } catch (error) {
         console.error('Error al cargar partida guardada:', error);
         startNewGame();
@@ -45,17 +52,23 @@ export default function Home() {
     setLastSelected(null);
     setLastNumbers([]);
     setSelectionHistory([]);
-    setCurrentPrize('');
+    setLinePrize('');
+    setBingoPrize('');
+    setLineClaimed(false);
+    setBingoClaimed(false);
   };
 
-  const saveGame = (selectedNumbers, lastSelected, lastNumbers, selectionHistory, currentPrize) => {
+  const saveGame = (selectedNumbers, lastSelected, lastNumbers, selectionHistory, linePrize, bingoPrize, lineClaimed, bingoClaimed) => {
     const gameData = {
       gameId,
       selectedNumbers: Array.from(selectedNumbers),
       lastSelected,
       lastNumbers,
       selectionHistory,
-      currentPrize,
+      linePrize,
+      bingoPrize,
+      lineClaimed,
+      bingoClaimed,
       timestamp: Date.now()
     };
     localStorage.setItem('bingoGame', JSON.stringify(gameData));
@@ -76,6 +89,9 @@ export default function Home() {
     if (newSelectedNumbers.has(number)) {
       // Desmarcar número
       newSelectedNumbers.delete(number);
+      
+      // Eliminar completamente del historial
+      newSelectionHistory = newSelectionHistory.filter(n => n !== number);
       
       // Si el número desmarcado era el último seleccionado, mostrar el anterior
       if (lastSelected === number) {
@@ -100,36 +116,50 @@ export default function Home() {
     setSelectionHistory(newSelectionHistory);
     
     // Guardar en localStorage
-    saveGame(newSelectedNumbers, newLastSelected, newLastNumbers, newSelectionHistory, currentPrize);
+    saveGame(newSelectedNumbers, newLastSelected, newLastNumbers, newSelectionHistory, linePrize, bingoPrize, lineClaimed, bingoClaimed);
   };
 
   const handleResetClick = () => {
     setShowPrizeModal(true);
-    setPrizeInput('');
+    setLinePrizeInput('');
+    setBingoPrizeInput('');
   };
 
   const handlePrizeSubmit = () => {
-    if (prizeInput.trim()) {
-      setCurrentPrize(prizeInput.trim());
+    if (linePrizeInput.trim() && bingoPrizeInput.trim()) {
+      const newLinePrize = linePrizeInput.trim();
+      const newBingoPrize = bingoPrizeInput.trim();
+      
       startNewGame();
-      setCurrentPrize(prizeInput.trim());
+      setLinePrize(newLinePrize);
+      setBingoPrize(newBingoPrize);
       localStorage.removeItem('bingoGame');
       setShowPrizeModal(false);
-      setPrizeInput('');
+      setLinePrizeInput('');
+      setBingoPrizeInput('');
     }
   };
 
   const handlePrizeCancel = () => {
     setShowPrizeModal(false);
-    setPrizeInput('');
+    setLinePrizeInput('');
+    setBingoPrizeInput('');
   };
 
   const handleLineClick = () => {
     setShowLineModal(true);
+    const newLineClaimed = !lineClaimed;
+    setLineClaimed(newLineClaimed);
+    // Guardar el estado actualizado
+    saveGame(selectedNumbers, lastSelected, lastNumbers, selectionHistory, linePrize, bingoPrize, newLineClaimed, bingoClaimed);
   };
 
   const handleBingoClick = () => {
     setShowBingoModal(true);
+    const newBingoClaimed = !bingoClaimed;
+    setBingoClaimed(newBingoClaimed);
+    // Guardar el estado actualizado
+    saveGame(selectedNumbers, lastSelected, lastNumbers, selectionHistory, linePrize, bingoPrize, lineClaimed, newBingoClaimed);
   };
 
   const closeLineModal = () => {
@@ -184,12 +214,30 @@ export default function Home() {
           {/* Panel lateral - 1/3 de la pantalla */}
           <div className="flex-1 w-80 bg-white rounded-lg shadow-lg p-4 flex flex-col min-h-0">
             <div className="text-center flex-1 flex flex-col min-h-0">
-              {/* Mostrar premio actual en el panel lateral */}
-              {currentPrize && (
-                <div className="bg-[#2F1F6F] text-white px-4 py-3 rounded-lg shadow-lg mb-4 flex-shrink-0">
-                  <h2 className="text-2xl font-bold text-center">
-                    Premio: {currentPrize}
+              {/* Mostrar premios en el panel lateral */}
+              {linePrize && (
+                <div className={`${lineClaimed ? 'opacity-50' : ''} bg-[#2F1F6F] text-white px-4 py-3 rounded-lg shadow-lg mb-3 flex-shrink-0`}>
+                  <h2 className={`text-xl font-bold text-center ${lineClaimed ? 'line-through' : ''}`}>
+                    Premio LÍNEA: {linePrize}
                   </h2>
+                  {lineClaimed && (
+                    <p className="text-sm text-center mt-1 opacity-75">
+                      ¡Reclamado!
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {bingoPrize && (
+                <div className={`${bingoClaimed ? 'opacity-50' : ''} bg-[#FF0D36] text-white px-4 py-3 rounded-lg shadow-lg mb-4 flex-shrink-0`}>
+                  <h2 className={`text-xl font-bold text-center ${bingoClaimed ? 'line-through' : ''}`}>
+                    Premio BINGO: {bingoPrize}
+                  </h2>
+                  {bingoClaimed && (
+                    <p className="text-sm text-center mt-1 opacity-75">
+                      ¡Reclamado!
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -259,13 +307,21 @@ export default function Home() {
               <div className="flex gap-2 mt-2 flex-shrink-0">
                 <button
                   onClick={handleLineClick}
-                  className="flex-1 bg-[#2F1F6F] hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                  className={`flex-1 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg ${
+                    lineClaimed 
+                      ? 'bg-gray-400 opacity-50' 
+                      : 'bg-[#2F1F6F] hover:bg-opacity-80'
+                  }`}
                 >
                   LÍNEA
                 </button>
                 <button
                   onClick={handleBingoClick}
-                  className="flex-1 bg-[#2F1F6F] hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                  className={`flex-1 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg ${
+                    bingoClaimed 
+                      ? 'bg-gray-400 opacity-50' 
+                      : 'bg-[#FF0D36] hover:bg-opacity-80'
+                  }`}
                 >
                   BINGO
                 </button>
@@ -274,29 +330,55 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Modal para ingresar premio */}
+        {/* Modal para ingresar premios */}
         {showPrizeModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
               <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                Nuevo Premio
+                Nuevos Premios
               </h3>
               <p className="text-gray-600 mb-4">
-                Ingresa el premio para la siguiente partida:
+                Ingresa los premios para la siguiente partida:
               </p>
-              <input
-                type="text"
-                value={prizeInput}
-                onChange={(e) => setPrizeInput(e.target.value)}
-                placeholder="Ej: $1000, Cena, etc."
-                className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#2F1F6F]"
-                autoFocus
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handlePrizeSubmit();
-                  }
-                }}
-              />
+              
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Premio LÍNEA:
+                </label>
+                <input
+                  type="text"
+                  value={linePrizeInput}
+                  onChange={(e) => setLinePrizeInput(e.target.value)}
+                  placeholder="Ej: $500, Cena, etc."
+                  className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#2F1F6F]"
+                  autoFocus
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      document.getElementById('bingo-prize-input').focus();
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Premio BINGO:
+                </label>
+                <input
+                  id="bingo-prize-input"
+                  type="text"
+                  value={bingoPrizeInput}
+                  onChange={(e) => setBingoPrizeInput(e.target.value)}
+                  placeholder="Ej: $1000, Viaje, etc."
+                  className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#FF0D36]"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handlePrizeSubmit();
+                    }
+                  }}
+                />
+              </div>
+
               <div className="flex gap-3">
                 <button
                   onClick={handlePrizeSubmit}
