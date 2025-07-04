@@ -27,9 +27,11 @@ export default function Home() {
       } catch (error) {
         console.error('Error al cargar partida guardada:', error);
         startNewGame();
+        setShowPrizeModal(true);
       }
     } else {
       startNewGame();
+      setShowPrizeModal(true);
     }
   }, []);
 
@@ -57,10 +59,10 @@ export default function Home() {
   };
 
   const updateLastNumbers = (history) => {
-    // Obtener los últimos 4 números del historial que aún están seleccionados
+    // Obtener los últimos 5 números del historial que aún están seleccionados
     const selectedFromHistory = history.filter(num => selectedNumbers.has(num));
     // Retornar en orden inverso para que el más reciente esté a la izquierda
-    return selectedFromHistory.slice(-4).reverse();
+    return selectedFromHistory.slice(-5).reverse();
   };
 
   const handleNumberClick = (number) => {
@@ -123,22 +125,22 @@ export default function Home() {
   const numbers = Array.from({ length: 100 }, (_, i) => i + 1);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <main className="max-w-7xl mx-auto h-screen flex flex-col">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+    <div className="h-screen bg-gray-100 p-4 overflow-hidden">
+      <main className="max-w-7xl mx-auto h-full flex flex-col">
+        <h1 className="text-2xl font-bold text-center mb-4 text-gray-800 flex-shrink-0">
           Bingo Batallón 1
         </h1>
         
-        <div className="flex gap-8 flex-1">
+        <div className="flex gap-6 flex-1 min-h-0">
           {/* Grilla de números - 2/3 de la pantalla */}
-          <div className="flex-2">
-            <div className="grid grid-cols-10 gap-3 bg-white p-8 rounded-lg shadow-lg h-full">
+          <div className="flex-2 min-h-0">
+            <div className="grid grid-cols-10 gap-2 bg-white p-4 rounded-lg shadow-lg h-full overflow-auto">
               {numbers.map((number) => (
                 <button
                   key={number}
                   onClick={() => handleNumberClick(number)}
                   className={`
-                    aspect-square w-16 rounded-lg font-bold text-xl transition-all duration-200
+                    aspect-square w-17 rounded-lg font-bold text-3xl transition-all duration-200
                     ${selectedNumbers.has(number)
                       ? 'bg-[#FF0D36] text-white shadow-lg transform scale-105'
                       : 'bg-blue-100 hover:bg-blue-200 text-blue-800 hover:scale-105'
@@ -152,41 +154,41 @@ export default function Home() {
           </div>
 
           {/* Panel lateral - 1/3 de la pantalla */}
-          <div className="flex-1 w-80 bg-white rounded-lg shadow-lg p-6 flex flex-col">
-            <div className="text-center flex-1 flex flex-col">
+          <div className="flex-1 w-80 bg-white rounded-lg shadow-lg p-4 flex flex-col min-h-0">
+            <div className="text-center flex-1 flex flex-col min-h-0">
               {/* Mostrar premio actual en el panel lateral */}
               {currentPrize && (
-                <div className="bg-[#2F1F6F] text-white px-6 py-4 rounded-lg shadow-lg mb-6">
-                  <h2 className="text-3xl font-bold text-center">
+                <div className="bg-[#2F1F6F] text-white px-4 py-3 rounded-lg shadow-lg mb-4 flex-shrink-0">
+                  <h2 className="text-2xl font-bold text-center">
                     Premio: {currentPrize}
                   </h2>
                 </div>
               )}
 
-              <h2 className="text-xl font-semibold mb-4 text-gray-700">
+              <h2 className="text-lg font-semibold mb-3 text-gray-700 flex-shrink-0">
                 Número Seleccionado
               </h2>
               
               {lastSelected ? (
-                <div className="mb-6 flex-1 flex flex-col">
-                  <div className="text-[15.6rem] font-bold text-[#FF0D36] mb-4 leading-none flex-1 flex items-center justify-center">
+                <div className="mb-4 flex-1 flex flex-col min-h-0">
+                  <div className="text-[18rem] font-bold text-[#FF0D36] mb-3 leading-none flex-1 flex items-center justify-center">
                     {lastSelected}
                   </div>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 mb-3 flex-shrink-0">
                     Números marcados: {selectedNumbers.size}
                   </p>
                   
-                  {/* Últimos 4 números */}
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-3 text-gray-700">
+                  {/* Últimos 5 números */}
+                  <div className="mt-4 flex-shrink-0">
+                    <h3 className="text-base font-semibold mb-2 text-gray-700">
                       Últimos números:
                     </h3>
-                    <div className="flex justify-center gap-3">
+                    <div className="flex justify-center gap-2">
                       {lastNumbers.map((num, index) => (
                         <div
                           key={index}
                           className={`
-                            aspect-square w-16 rounded-lg font-bold text-xl flex items-center justify-center transition-all duration-200
+                            aspect-square w-17 rounded-lg font-bold text-3xl flex items-center justify-center transition-all duration-200
                             ${index === 0 
                               ? 'bg-[#2F1F6F] text-white shadow-lg transform scale-105' 
                               : 'bg-blue-100 text-blue-800'
@@ -197,10 +199,10 @@ export default function Home() {
                         </div>
                       ))}
                       {/* Rellenar espacios vacíos */}
-                      {Array.from({ length: 4 - lastNumbers.length }, (_, index) => (
+                      {Array.from({ length: 5 - lastNumbers.length }, (_, index) => (
                         <div
                           key={`empty-${index}`}
-                          className="aspect-square w-16 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center font-bold text-xl"
+                          className="aspect-square w-17 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center font-bold text-3xl"
                         >
                           -
                         </div>
@@ -209,11 +211,11 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                <div className="mb-6 flex-1 flex flex-col">
-                  <div className="text-[15.6rem] font-bold text-gray-300 mb-4 leading-none flex-1 flex items-center justify-center">
+                <div className="mb-4 flex-1 flex flex-col min-h-0">
+                  <div className="text-[18rem] font-bold text-gray-300 mb-3 leading-none flex-1 flex items-center justify-center">
                     -
                   </div>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 flex-shrink-0">
                     Selecciona un número
                   </p>
                 </div>
@@ -221,7 +223,7 @@ export default function Home() {
 
               <button
                 onClick={handleResetClick}
-                className="w-full bg-[#FF0D36] hover:bg-opacity-80 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="w-full bg-[#FF0D36] hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex-shrink-0"
               >
                 Reiniciar Juego
               </button>
