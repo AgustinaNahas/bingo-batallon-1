@@ -11,6 +11,8 @@ export default function Home() {
   const [currentPrize, setCurrentPrize] = useState('');
   const [showPrizeModal, setShowPrizeModal] = useState(false);
   const [prizeInput, setPrizeInput] = useState('');
+  const [showLineModal, setShowLineModal] = useState(false);
+  const [showBingoModal, setShowBingoModal] = useState(false);
 
   // Cargar partida existente al montar el componente
   useEffect(() => {
@@ -121,6 +123,22 @@ export default function Home() {
     setPrizeInput('');
   };
 
+  const handleLineClick = () => {
+    setShowLineModal(true);
+  };
+
+  const handleBingoClick = () => {
+    setShowBingoModal(true);
+  };
+
+  const closeLineModal = () => {
+    setShowLineModal(false);
+  };
+
+  const closeBingoModal = () => {
+    setShowBingoModal(false);
+  };
+
   // Crear array de números del 1 al 100
   const numbers = Array.from({ length: 100 }, (_, i) => i + 1);
 
@@ -227,6 +245,21 @@ export default function Home() {
               >
                 Reiniciar Juego
               </button>
+
+              <div className="flex gap-2 mt-2 flex-shrink-0">
+                <button
+                  onClick={handleLineClick}
+                  className="flex-1 bg-[#2F1F6F] hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                >
+                  LÍNEA
+                </button>
+                <button
+                  onClick={handleBingoClick}
+                  className="flex-1 bg-[#2F1F6F] hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                >
+                  BINGO
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -268,6 +301,34 @@ export default function Home() {
                   Cancelar
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal LÍNEA a pantalla completa */}
+        {showLineModal && (
+          <div className="fixed inset-0 bg-[#2F1F6F] flex items-center justify-center z-50" onClick={closeLineModal}>
+            <div className="text-center">
+              <h1 className="text-[20rem] font-bold text-white leading-none">
+                LÍNEA
+              </h1>
+              <p className="w-full text-center text-white text-md absolute bottom-20 left-0">
+                ¡Toca la pantalla para cerrar!
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Modal BINGO a pantalla completa */}
+        {showBingoModal && (
+          <div className="fixed inset-0 bg-[#FF0D36] flex items-center justify-center z-50" onClick={closeBingoModal}>
+            <div className="text-center">
+              <h1 className="text-[20rem] font-bold text-white leading-none">
+                BINGO
+              </h1>
+              <p className="w-full text-center text-white text-md absolute bottom-20 left-0">
+                ¡Toca la pantalla para cerrar!
+              </p>
             </div>
           </div>
         )}
