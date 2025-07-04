@@ -1,0 +1,275 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function Home() {
+  const [selectedNumbers, setSelectedNumbers] = useState(new Set());
+  const [lastSelected, setLastSelected] = useState(null);
+  const [lastNumbers, setLastNumbers] = useState([]);
+  const [gameId, setGameId] = useState(null);
+  const [selectionHistory, setSelectionHistory] = useState([]);
+  const [currentPrize, setCurrentPrize] = useState('');
+  const [showPrizeModal, setShowPrizeModal] = useState(false);
+  const [prizeInput, setPrizeInput] = useState('');
+
+  // Cargar partida existente al montar el componente
+  useEffect(() => {
+    const savedGame = localStorage.getItem('bingoGame');
+    if (savedGame) {
+      try {
+        const gameData = JSON.parse(savedGame);
+        setSelectedNumbers(new Set(gameData.selectedNumbers));
+        setLastSelected(gameData.lastSelected);
+        setLastNumbers(gameData.lastNumbers || []);
+        setGameId(gameData.gameId);
+        setSelectionHistory(gameData.selectionHistory || []);
+        setCurrentPrize(gameData.currentPrize || '');
+      } catch (error) {
+        console.error('Error al cargar partida guardada:', error);
+        startNewGame();
+      }
+    } else {
+      startNewGame();
+    }
+  }, []);
+
+  const startNewGame = () => {
+    const newGameId = Date.now().toString();
+    setGameId(newGameId);
+    setSelectedNumbers(new Set());
+    setLastSelected(null);
+    setLastNumbers([]);
+    setSelectionHistory([]);
+    setCurrentPrize('');
+  };
+
+  const saveGame = (selectedNumbers, lastSelected, lastNumbers, selectionHistory, currentPrize) => {
+    const gameData = {
+      gameId,
+      selectedNumbers: Array.from(selectedNumbers),
+      lastSelected,
+      lastNumbers,
+      selectionHistory,
+      currentPrize,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('bingoGame', JSON.stringify(gameData));
+  };
+
+  const updateLastNumbers = (history) => {
+    // Obtener los últimos 4 números del historial que aún están seleccionados
+    const selectedFromHistory = history.filter(num => selectedNumbers.has(num));
+    // Retornar en orden inverso para que el más reciente esté a la izquierda
+    return selectedFromHistory.slice(-4).reverse();
+  };
+
+  const handleNumberClick = (number) => {
+    const newSelectedNumbers = new Set(selectedNumbers);
+    let newLastSelected = lastSelected;
+    let newSelectionHistory = [...selectionHistory];
+    
+    if (newSelectedNumbers.has(number)) {
+      // Desmarcar número
+      newSelectedNumbers.delete(number);
+      
+      // Si el número desmarcado era el último seleccionado, mostrar el anterior
+      if (lastSelected === number) {
+        const remainingSelected = Array.from(newSelectedNumbers);
+        newLastSelected = remainingSelected.length > 0 ? remainingSelected[remainingSelected.length - 1] : null;
+      }
+    } else {
+      // Marcar número
+      newSelectedNumbers.add(number);
+      newLastSelected = number;
+      
+      // Agregar al historial
+      newSelectionHistory.push(number);
+    }
+    
+    // Actualizar la lista de últimos números basada en el historial
+    const newLastNumbers = updateLastNumbers(newSelectionHistory);
+    
+    setSelectedNumbers(newSelectedNumbers);
+    setLastSelected(newLastSelected);
+    setLastNumbers(newLastNumbers);
+    setSelectionHistory(newSelectionHistory);
+    
+    // Guardar en localStorage
+    saveGame(newSelectedNumbers, newLastSelected, newLastNumbers, newSelectionHistory, currentPrize);
+  };
+
+  const handleResetClick = () => {
+    setShowPrizeModal(true);
+    setPrizeInput('');
+  };
+
+  const handlePrizeSubmit = () => {
+    if (prizeInput.trim()) {
+      setCurrentPrize(prizeInput.trim());
+      startNewGame();
+      setCurrentPrize(prizeInput.trim());
+      localStorage.removeItem('bingoGame');
+      setShowPrizeModal(false);
+      setPrizeInput('');
+    }
+  };
+
+  const handlePrizeCancel = () => {
+    setShowPrizeModal(false);
+    setPrizeInput('');
+  };
+
+  // Crear array de números del 1 al 100
+  const numbers = Array.from({ length: 100 }, (_, i) => i + 1);
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4">
+      <main className="max-w-7xl mx-auto h-screen flex flex-col">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+          Bingo Batallón 1
+        </h1>
+        
+        <div className="flex gap-8 flex-1">
+          {/* Grilla de números - 2/3 de la pantalla */}
+          <div className="flex-2">
+            <div className="grid grid-cols-10 gap-3 bg-white p-8 rounded-lg shadow-lg h-full">
+              {numbers.map((number) => (
+                <button
+                  key={number}
+                  onClick={() => handleNumberClick(number)}
+                  className={`
+                    aspect-square w-16 rounded-lg font-bold text-xl transition-all duration-200
+                    ${selectedNumbers.has(number)
+                      ? 'bg-[#FF0D36] text-white shadow-lg transform scale-105'
+                      : 'bg-blue-100 hover:bg-blue-200 text-blue-800 hover:scale-105'
+                    }
+                  `}
+                >
+                  {number}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Panel lateral - 1/3 de la pantalla */}
+          <div className="flex-1 w-80 bg-white rounded-lg shadow-lg p-6 flex flex-col">
+            <div className="text-center flex-1 flex flex-col">
+              {/* Mostrar premio actual en el panel lateral */}
+              {currentPrize && (
+                <div className="bg-[#2F1F6F] text-white px-6 py-4 rounded-lg shadow-lg mb-6">
+                  <h2 className="text-3xl font-bold text-center">
+                    Premio: {currentPrize}
+                  </h2>
+                </div>
+              )}
+
+              <h2 className="text-xl font-semibold mb-4 text-gray-700">
+                Número Seleccionado
+              </h2>
+              
+              {lastSelected ? (
+                <div className="mb-6 flex-1 flex flex-col">
+                  <div className="text-[15.6rem] font-bold text-[#FF0D36] mb-4 leading-none flex-1 flex items-center justify-center">
+                    {lastSelected}
+                  </div>
+                  <p className="text-gray-600 mb-4">
+                    Números marcados: {selectedNumbers.size}
+                  </p>
+                  
+                  {/* Últimos 4 números */}
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-700">
+                      Últimos números:
+                    </h3>
+                    <div className="flex justify-center gap-3">
+                      {lastNumbers.map((num, index) => (
+                        <div
+                          key={index}
+                          className={`
+                            aspect-square w-16 rounded-lg font-bold text-xl flex items-center justify-center transition-all duration-200
+                            ${index === 0 
+                              ? 'bg-[#2F1F6F] text-white shadow-lg transform scale-105' 
+                              : 'bg-blue-100 text-blue-800'
+                            }
+                          `}
+                        >
+                          {num}
+                        </div>
+                      ))}
+                      {/* Rellenar espacios vacíos */}
+                      {Array.from({ length: 4 - lastNumbers.length }, (_, index) => (
+                        <div
+                          key={`empty-${index}`}
+                          className="aspect-square w-16 bg-gray-200 text-gray-400 rounded-lg flex items-center justify-center font-bold text-xl"
+                        >
+                          -
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6 flex-1 flex flex-col">
+                  <div className="text-[15.6rem] font-bold text-gray-300 mb-4 leading-none flex-1 flex items-center justify-center">
+                    -
+                  </div>
+                  <p className="text-gray-600">
+                    Selecciona un número
+                  </p>
+                </div>
+              )}
+
+              <button
+                onClick={handleResetClick}
+                className="w-full bg-[#FF0D36] hover:bg-opacity-80 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+              >
+                Reiniciar Juego
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal para ingresar premio */}
+        {showPrizeModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+              <h3 className="text-2xl font-bold mb-4 text-gray-800">
+                Nuevo Premio
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Ingresa el premio para la siguiente partida:
+              </p>
+              <input
+                type="text"
+                value={prizeInput}
+                onChange={(e) => setPrizeInput(e.target.value)}
+                placeholder="Ej: $1000, Cena, etc."
+                className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#2F1F6F]"
+                autoFocus
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePrizeSubmit();
+                  }
+                }}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={handlePrizeSubmit}
+                  className="flex-1 bg-[#2F1F6F] hover:bg-opacity-80 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200"
+                >
+                  Confirmar
+                </button>
+                <button
+                  onClick={handlePrizeCancel}
+                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors duration-200"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
