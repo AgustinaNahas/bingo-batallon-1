@@ -22,7 +22,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/logo.png",
+        url: "/bingo-batallon-1/logo.png",
         width: 400,
         height: 400,
         alt: "Logo Batallón 1 Exploradores Salesianos",
@@ -33,11 +33,11 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bingo Batallón 1 - Exploradores Argentinos de Don Bosco",
     description: "Aplicación para jugar al bingo del Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco",
-    images: ["/logo.png"],
+    images: ["/bingo-batallon-1/logo.png"],
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/logo.png",
+    icon: "/bingo-batallon-1/favicon.ico",
+    apple: "/bingo-batallon-1/logo.png",
   },
 };
 

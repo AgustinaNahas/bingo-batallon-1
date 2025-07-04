@@ -148,7 +148,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto h-full flex flex-col">
         <div className="flex items-center justify-center mb-4 text-gray-800 flex-shrink-0">
           <Image
-            src="/logo.png"
+            src="/bingo-batallon-1/logo.png"
             alt="Logo Batallón 1 Exploradores Salesianos"
             width={60}
             height={60}
