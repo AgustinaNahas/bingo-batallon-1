@@ -12,13 +12,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Bingo Batallón 1 - Exploradores Salesianos de Don Bosco",
-  description: "Aplicación para jugar al bingo del Batallón 1 de Exploradores Salesianos de Don Bosco. Herramienta interactiva para organizar partidas de bingo con seguimiento de premios y números seleccionados.",
-  keywords: "bingo, exploradores, salesianos, don bosco, batallón 1, juego, premios",
+  title: "Bingo Batallón 1 - Exploradores Argentinos de Don Bosco",
+  description: "Aplicación para jugar al bingo del Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco. Herramienta interactiva para organizar partidas de bingo con seguimiento de premios y números seleccionados.",
+  keywords: "bingo, exploradores, salesianos, don bosco, batallón 1, pablo barton, juego, premios",
   authors: [{ name: "Batallón 1 Exploradores Salesianos" }],
   openGraph: {
     title: "Bingo Batallón 1 - Exploradores Salesianos de Don Bosco",
-    description: "Aplicación para jugar al bingo del Batallón 1 de Exploradores Salesianos de Don Bosco",
+    description: "Aplicación para jugar al bingo del Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco",
     type: "website",
     images: [
       {
@@ -31,8 +31,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bingo Batallón 1 - Exploradores Salesianos de Don Bosco",
-    description: "Aplicación para jugar al bingo del Batallón 1 de Exploradores Salesianos de Don Bosco",
+    title: "Bingo Batallón 1 - Exploradores Argentinos de Don Bosco",
+    description: "Aplicación para jugar al bingo del Batallón 1 Pablo César Barton de Exploradores Argentinos de Don Bosco",
     images: ["/logo.png"],
   },
   icons: {
